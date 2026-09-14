@@ -1,8 +1,8 @@
-# 🌿 FloraHUB
+# FloraHUB
 
 > Hub pessoal para gerenciamento e integração de dispositivos IoT.
 
-## 📖 Sobre o projeto
+## Sobre o projeto
 
 O FloraHUB é um projeto pessoal desenvolvido para centralizar
 e controlar dispositivos físicos através de uma interface web.
@@ -15,19 +15,14 @@ Lighter, uma lâmpada inteligente controlada através da
 Tuya Developer Platform.
 
 ## 🛠️ Tecnologias
-Backend
-Node.js
-TypeScript
-Fastify
-Tuya Node.js SDK
-Frontend
-HTML
-JavaScript
-Infraestrutura
-Git
-GitHub
+- Node.js
+- TypeScript
+- Fastify
+- Tuya Node.js SDK
+- HTML
+- JavaScript
 
-## 👨‍💻 Autor
+## Autor
 
 Fabricio Hipólito Silva
 
