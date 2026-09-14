@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lighter</title>
+</head>
+<body>
+    <a href="index.html"><button>Voltar</button></a>
+    <h1>Lighter</h1>
+    <button id="getStatus">Obter Status</button>
+    <button id="turnOn">Ligar</button>
+    <button id="turnOff">Desligar</button>
+    <p id="status">Status: Desconhecido</p>
+    <script>
+        const getStatusButton = document.getElementById('getStatus');
+        const turnOnButton = document.getElementById('turnOn');
+        const turnOffButton = document.getElementById('turnOff');
+        getStatusButton.addEventListener("click", async()=>{
+            const response = await fetch("http://localhost:3000/api/lighter");
+            const data = await response.json();
+            console.log(data);
+            document.getElementById('status').innerText = `
+            Conectado: ${data.online ? 'Sim' : 'Não'} \n
+            Nome: ${data.name} \n
+            Modo de Trabalho: ${data.work_mode} \n
+            Brilho: ${data.bright_value_v2} \n
+            Temperatura: ${data.temp_value_v2} \n
+            Ligado: ${data.power ? 'Sim' : 'Não'} \n 
+             `;
+            
+        })
+
+        turnOnButton.addEventListener("click", async()=>{
+            await fetch("http://localhost:3000/api/lighter/on",{
+                method: "POST"
+            })
+        })
+        turnOffButton.addEventListener("click", async()=>{
+            await fetch("http://localhost:3000/api/lighter/off",{
+                method: "POST"
+            })
+        })
+
+    </script>
+
+</body>
+</html>
