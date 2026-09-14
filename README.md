@@ -28,10 +28,10 @@ Fabricio Hipólito Silva
 
 Projeto desenvolvido como estudo de:
 
-TypeScript
-Node.js
-APIs REST
-IoT
-HTTP
-Arquitetura de software
-Integração com serviços externos
+- TypeScript
+- Node.js
+- APIs REST
+- IoT
+- HTTP
+- Arquitetura de software
+- Integração com serviços externos
