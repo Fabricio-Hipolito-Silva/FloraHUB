@@ -17,3 +17,10 @@ export interface TuyaDeviceStatus{
     code: string;
     value: unknown;
 }
+
+export interface HSV{
+    h: number;
+    s: number;
+    v: number;
+}
+

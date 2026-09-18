@@ -1,14 +1,14 @@
-import { LighterStatus, TuyaDeviceStatus } from "../types/lighter.js";
+import { LighterStatus, TuyaDeviceStatus, HSV } from "../types/lighter.js"; //Importa as interfaces
 import "dotenv/config"
-import { TuyaContext } from '@tuya/tuya-connector-nodejs'
-console.log('Starting Tuya Connector...')
+import { TuyaContext } from '@tuya/tuya-connector-nodejs' //Biblioteca para conectar com a API da Tuya
 const tuyaContext = new TuyaContext({
   baseUrl: 'https://openapi.tuyaus.com',
   accessKey: process.env.TUYA_CLIENT_ID!,
   secretKey: process.env.TUYA_CLIENT_SECRET!,
 })
 const deviceId = process.env.TUYA_DEVICE_ID!
-export async function getLighterStatus(): Promise<LighterStatus> {
+
+export async function getLighterStatus(): Promise<LighterStatus> { //Promete retornar um objeto da interface LighterStatus
     const deviceDetail = await tuyaContext.device.detail({
         device_id: deviceId,
     });
@@ -57,6 +57,46 @@ export async function turnLighterOff(): Promise<void> {
                 {
                     code: 'switch_led',
                     value: false,
+                }
+            ],
+        },
+    })
+}
+
+
+function toHex4(value: number): string {
+    return value.toString(16).padStart(4, "0"); //Converte em hexadecimal base 16, e preenche com zeros à esquerda para garantir que tenha 4 dígitos
+}
+
+function hsvToTuyaColor({h, s, v}: HSV): string{
+    const hValue = h;
+    const sValue = s * 10;
+    const vValue = v * 10;
+    return (
+        toHex4(hValue) +
+        toHex4(sValue) +
+        toHex4(vValue)
+    );
+}// Converte tudo em uma string aceita pela tuya
+
+export async function changeLighterColor(HSV: HSV){
+    console.log(hsvToTuyaColor(HSV));
+    await tuyaContext.request({
+        path: `/v1.0/iot-03/devices/${deviceId}/commands`,
+        method: 'POST',
+        body: {
+            commands: [
+                {
+                    code: 'switch_led',
+                    value: true,
+                },
+                {
+                    code: 'work_mode',
+                    value: 'colour',
+                },
+                {
+                    code: 'colour_data',
+                    value: hsvToTuyaColor(HSV),
                 }
             ],
         },
