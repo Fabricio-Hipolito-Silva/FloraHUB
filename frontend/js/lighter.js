@@ -26,7 +26,7 @@
             console.log("Estado alterado(FRONTEND):", lighterState);
             clearTimeout(stateTimeout);
             stateTimeout = setTimeout(async () => {
-                await fetch("http://localhost:3000/api/lighter/state", {
+                await fetch("/api/lighter/state", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"

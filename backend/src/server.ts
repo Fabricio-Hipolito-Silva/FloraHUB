@@ -1,5 +1,7 @@
 import {fastify} from 'fastify';
 import cors from "@fastify/cors";
+import fastifyStatic from "@fastify/static";
+import path from "node:path";
 import { lighterRoutes } from './routes/lighter.routes';
 
 const app = fastify({
@@ -9,10 +11,15 @@ const app = fastify({
 app.register(cors, { //Registra o CORS
     origin: true // Permite requisições de qualquer origem
 }); 
-app.get("/", async()=>{
-    return{
-        message: "FloraHUB Backend is running!"
-    };
+app.register(fastifyStatic, {
+    root: path.join(__dirname, "../../frontend"),
+    prefix: "/"
+});
+app.get("/", async(request, reply)=>{
+    return reply.sendFile("html/index.html")
+});
+app.get("/lighter", async (request, reply) => {
+    return reply.sendFile("html/lighter.html");
 });
 app.register(lighterRoutes); //Registra as rotas do lighter
 
