@@ -1,4 +1,4 @@
-import { LighterStatus, TuyaDeviceStatus, HSV } from "../types/lighter.js"; //Importa as interfaces
+import { LighterStatus, TuyaDeviceStatus, HSV, LighterState } from "../types/lighter.js"; //Importa as interfaces
 import "dotenv/config"
 import { TuyaContext } from '@tuya/tuya-connector-nodejs' //Biblioteca para conectar com a API da Tuya
 const tuyaContext = new TuyaContext({
@@ -22,7 +22,6 @@ export async function getLighterStatus(): Promise<LighterStatus> { //Promete ret
     const workModeStatus = deviceStatus.result.find((status) => status.code === 'work_mode');
     const BrightValueStatus = deviceStatus.result.find((status) => status.code ==='bright_value');
     const TempValueStatus = deviceStatus.result.find((status) => status.code ==='temp_value');
-
     return {
         online: deviceDetail.result.online,
         name: deviceDetail.result.name,
@@ -31,36 +30,6 @@ export async function getLighterStatus(): Promise<LighterStatus> { //Promete ret
         bright_value_v2: BrightValueStatus?.value as number,
         temp_value_v2: TempValueStatus?.value as number,
     };
-}
-
-export async function turnLighterOn(): Promise<void> {
-    await tuyaContext.request({
-        path: `/v1.0/iot-03/devices/${deviceId}/commands`,
-        method: 'POST',
-        body: {
-            commands: [
-                {
-                    code: 'switch_led',
-                    value: true,
-                }
-            ],
-        },
-    })
-}
-
-export async function turnLighterOff(): Promise<void> {
-    await tuyaContext.request({
-        path: `/v1.0/iot-03/devices/${deviceId}/commands`,
-        method: 'POST',
-        body: {
-            commands: [
-                {
-                    code: 'switch_led',
-                    value: false,
-                }
-            ],
-        },
-    })
 }
 
 
@@ -78,27 +47,35 @@ function hsvToTuyaColor({h, s, v}: HSV): string{
         toHex4(vValue)
     );
 }// Converte tudo em uma string aceita pela tuya
+export async function changeLighterState(state: LighterState){
+    const commands = [
+        {
+            code: 'switch_led',
+            value: state.power,
+        },
+        {
+            code: 'work_mode',
+            value: state.work_mode,
+        },
+        {
+            code: 'bright_value',
+            value: state.brightness_value_v2,
+        },
+        {
+            code: 'temp_value',
+            value: state.temperature_value_v2,
+        },
+        {
+            code: 'colour_data',
+            value: hsvToTuyaColor(state.color),
+        }
+    ];
 
-export async function changeLighterColor(HSV: HSV){
-    console.log(hsvToTuyaColor(HSV));
     await tuyaContext.request({
         path: `/v1.0/iot-03/devices/${deviceId}/commands`,
         method: 'POST',
         body: {
-            commands: [
-                {
-                    code: 'switch_led',
-                    value: true,
-                },
-                {
-                    code: 'work_mode',
-                    value: 'colour',
-                },
-                {
-                    code: 'colour_data',
-                    value: hsvToTuyaColor(HSV),
-                }
-            ],
-        },
-    })
+            commands: commands
+        }
+    });
 }
